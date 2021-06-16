@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include "histogram.h"
 
 using namespace std;
 
@@ -11,19 +12,6 @@ input_numbers(size_t count) {
     }
     return result;
 }
-
-void find_minmax(vector<double> numbers, double& min, double& max) {
-    min = numbers[0];
-    for (double number : numbers) {
-        if (number < min) {
-            min = number;
-        }
-        if (number > max) {
-            max = number;
-        }
-    }
-}
-
 
 vector <size_t> make_histogram(const vector<double>& numbers, size_t bin_count)
 {
@@ -66,32 +54,46 @@ void svg_text(double left, double baseline, string text)
 }
 
 void show_histogram_svg(const vector<size_t>& bins)
- {
+{
 const auto IMAGE_WIDTH = 400;
+const auto MAX_WIDTH = 350;
 const auto IMAGE_HEIGHT = 300;
 const auto TEXT_LEFT = 20;
 const auto TEXT_BASELINE = 20;
 const auto TEXT_WIDTH = 50;
 const auto BIN_HEIGHT = 30;
-const auto BLOCK_WIDTH = 10;
+const double BLOCK_WIDTH = 10;
+svg_begin(IMAGE_WIDTH, IMAGE_HEIGHT);
+double top = 0;
+
+size_t max_count = 0;
+for (size_t count : bins) {
+if (count > max_count) {
+max_count = count;
+}
+}
+const bool scaling_needed = (max_count * BLOCK_WIDTH) > MAX_WIDTH;
+
+for (size_t bin : bins)
+{
+const double bin_width = BLOCK_WIDTH * bin;
+
+size_t width = bin_width;
+if (scaling_needed) {
+const double scaling_factor = (double)MAX_WIDTH / (max_count * BLOCK_WIDTH);
+width = (bin_width * scaling_factor);
+}
+
 string stroke = "red";
 string fill = "red";
 
-    svg_begin(400, 300);
-    svg_text(20, 20, to_string(bins[0]));
-    svg_rect(50, 0, bins[0] * 10, 30, stroke, fill);
 
-    double top = 0;
-for (size_t bin : bins) {
-    const double bin_width = BLOCK_WIDTH * bin;
-    svg_text(TEXT_LEFT, top + TEXT_BASELINE, to_string(bin));
-    svg_rect(TEXT_WIDTH, top, bin_width, BIN_HEIGHT, stroke, fill);
-    top += BIN_HEIGHT;
+svg_text(TEXT_LEFT, top + TEXT_BASELINE, to_string(bin));
+svg_rect(TEXT_WIDTH, top, width, BIN_HEIGHT, stroke, fill);
+top += BIN_HEIGHT;
 }
-    svg_end();
+svg_end();
 }
-
-
 
 void show_histogram_text (const vector<double>& bins)
 {
@@ -127,6 +129,7 @@ void show_histogram_text (const vector<double>& bins)
  cout << '\n';
     }
 }
+
 
 int main()
 {
