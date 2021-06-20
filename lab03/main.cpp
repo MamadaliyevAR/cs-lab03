@@ -48,9 +48,33 @@ read_input(istream& in,bool prompt)
 
 
 int
-main() {
-    curl_global_init(CURL_GLOBAL_ALL);
+main(int argc, char* argv[])
+{
+    if (argc > 1)
+    {
+        CURL* curl = curl_easy_init();
+        if(curl)
+        {
+            CURLcode res;
+            curl_easy_setopt(curl, CURLOPT_URL, argv[1]);
+            /* ask libcurl to show us the verbose output */
+            // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+            res = curl_easy_perform(curl);
+            curl_easy_cleanup(curl);
+            if (res != CURLE_OK)
+            {
+                cerr << curl_easy_strerror(res);
+                exit(1);
+            }
+
+        }
+        return 0;
+    }
+
+    // curl_global_init(CURL_GLOBAL_ALL);
     const auto input = read_input(cin, true);
-    const auto bins = make_histogram(input);
+    const vector<size_t> bins = make_histogram(input);
+    // show_histogram_text(bins);
     show_histogram_svg(bins);
 }
