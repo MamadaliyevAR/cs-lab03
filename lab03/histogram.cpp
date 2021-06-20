@@ -1,51 +1,78 @@
  #include "histogram.h"
+ #include <iostream>
 
- const vector<size_t>
-make_histogram(Input input)
+ void
+find_minmax(const vector<double>& numbers, double& min, double& max)
 {
-    double min;
-    double max;
-    vector<size_t> bins(input.bin_count);
-
-    find_minmax(input.numbers, min, max);
-
-    double bin_size = (max - min) / bins.size();
-    for (size_t i = 0; i < input.numbers.size(); i++)
+    if (numbers.size() == 0)
     {
-        bool found = false;
-        for (size_t j = 0; (j < bins.size() - 1) && !found; j++)
-        {
-            auto low = min + j * bin_size;
-            auto high = min + (j + 1) * bin_size;
-            if ((input.numbers[i] >= low) && (input.numbers[i] < high))
-            {
-                bins[j]++;
-                found = true;
-            }
-        }
-        if (!found)
-        {
-            bins[bins.size() - 1]++;
-        }
+        return;
     }
-    return bins;
+    else
+    min = numbers[0];
+    max = numbers [0];
+    for (double number : numbers)
+        {
+        if (number < min)
+        {
+            min = number;
+        }
+        if (number > max)
+         {
+            max = number;
+         }
+        }
+}
+
+vector<size_t>
+make_histogram (const Input& data)
+{
+    double min , max ;
+    find_minmax(data.numbers,min,max);
+ vector<size_t> result(data.bin_count);
+ for (double number : data.numbers)
+        {
+        size_t bin = (size_t)((number - min) / (max - min) * data.bin_count);
+        if (bin == data.bin_count) {
+ bin--;
+        }
+ result[bin]++;
+    }
+  return result;
 }
 
 void
-find_minmax(const vector<double>& numbers, double& min, double& max)
+show_histogram_text (const vector<size_t>& bins)
 {
-    if (numbers.size() == 0) return;
-    min = numbers[0];
-    max = numbers[0];
-    for (size_t i = 0; i < numbers.size(); i++)
-    {
-        if (numbers[i] < min)
-        {
-            min = numbers[i];
+    const size_t SCREEN_WIDTH = 80;
+    const size_t MAX_ASTERISK = SCREEN_WIDTH - 4 - 1;
+
+    size_t max_count = 0;
+    for (size_t count : bins) {
+        if (count > max_count) {
+ max_count = count;
         }
-        if (numbers[i] > max)
-        {
-            max = numbers[i];
+    }
+    const bool scaling_needed = max_count > MAX_ASTERISK;
+
+    for (size_t bin : bins) {
+        if (bin < 100) {
+ cout << ' ';
         }
+        if (bin < 10) {
+ cout << ' ';
+        }
+ cout << bin << "|";
+
+        size_t height = bin;
+        if (scaling_needed) {
+            const double scaling_factor = (double)MAX_ASTERISK / max_count;
+ height = (size_t)(bin * scaling_factor);
+        }
+
+        for (size_t i = 0; i < height; i++) {
+ cout << '*';
+        }
+ cout << '\n';
     }
 }
