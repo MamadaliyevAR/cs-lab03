@@ -5,29 +5,31 @@
 
 using namespace std;
 
+
 vector<double>
-input_numbers(istream& in, size_t count) {
+input_numbers(istream& in, size_t count)
+{
     vector<double> result(count);
     for (size_t i = 0; i < count; i++)
     {
+        cerr << "Enter " << i + 1 << " number:\t";
         in >> result[i];
     }
     return result;
 }
 
-vector <size_t> make_histogram(const vector<double>& numbers, size_t bin_count)
+Input
+read_input(istream& in)
 {
-    double min, max;
-    find_minmax(numbers, min, max);
-    vector<size_t> result(bin_count);
-    for (double number : numbers) {
-        size_t bin = (size_t)((number - min) / (max - min) * bin_count);
-        if (bin == bin_count) {
-            bin--;
-        }
-        result[bin]++;
-    }
-    return result;
+    Input data;
+    cerr << "Enter number count: ";
+    size_t number_count;
+    in >> number_count;
+    cerr << "Enter numbers: ";
+    data.numbers = input_numbers(in, number_count);
+    cerr << "Enter quantity of bins: ";
+    in >> data.bin_count;
+    return data;
 }
 
 void show_histogram_text (const vector<double>& bins)
@@ -66,26 +68,9 @@ void show_histogram_text (const vector<double>& bins)
 }
 
 
-int main()
-{
-    // Ввод данных
-    size_t number_count;
-    cerr << "Enter number count: ";
-    cin >> number_count;
-
-    const auto numbers = input_numbers(cin, number_count);
-
-    size_t bin_count;
-    cerr << "Enter column count: ";
-    cin >> bin_count;
-
-    // Обработка данных
-
-    const auto bins = make_histogram(numbers, bin_count);
-
-    // Вывод данных
-   show_histogram_svg(bins);
-
-
-    return 0;
+int
+main() {
+    const auto input = read_input(cin);
+    const auto bins = make_histogram(input);
+    show_histogram_svg(bins);
 }

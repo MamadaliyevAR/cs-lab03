@@ -19,10 +19,10 @@
 	<vector>
 	"svg.h"
 
-1623865026 source:e:\Учеба\lab03\histogram.cpp
+1624194772 source:e:\Учеба\lab03\histogram.cpp
 	"histogram.h"
 
-1623865026 e:\Учеба\lab03\histogram.h
+1624195185 e:\Учеба\lab03\histogram.h
 	<vector>
 
 1623880319 source:e:\Учеба\lab03\svg.cpp
@@ -33,7 +33,7 @@
 1623880319 e:\Учеба\lab03\svg.h
 	<vector>
 
-1624191271 source:e:\Учеба\lab03\main.cpp
+1624194811 source:e:\Учеба\lab03\main.cpp
 	<iostream>
 	<vector>
 	"histogram.h"

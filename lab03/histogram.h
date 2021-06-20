@@ -5,6 +5,14 @@
 
 using namespace std;
 
-void find_minmax(const vector<double> numbers, double& min, double& max);
+struct Input
+{
+    vector<double> numbers;
+    size_t bin_count;
+};
+
+const vector <size_t> make_histogram (Input input);
+
+void find_minmax(const vector<double>& numbers, double& min, double& max);
 
 #endif // HISTOGRAM_H_INCLUDED
