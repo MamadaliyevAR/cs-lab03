@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1623880319 source:e:\Учеба\Прога\ЛР 3\lab03\main.cpp
+1624191093 source:e:\Учеба\Прога\ЛР 3\lab03\main.cpp
 	<iostream>
 	<vector>
 	"histogram.h"
@@ -14,7 +14,32 @@
 1623880319 e:\Учеба\Прога\ЛР 3\lab03\svg.h
 	<vector>
 
-1623880319 source:e:\Учеба\Прога\ЛР 3\lab03\svg.cpp
+1624521067 source:e:\Учеба\Прога\ЛР 3\lab03\svg.cpp
+	<iostream>
+	<vector>
+	"svg.h"
+
+1625574887 source:e:\Учеба\Прога\ЛР 4\lab04-2\histogram.cpp
+	"histogram.h"
+
+1625574951 e:\Учеба\Прога\ЛР 4\lab04-2\histogram.h
+	<vector>
+	<iostream>
+
+1625576281 source:e:\Учеба\Прога\ЛР 4\lab04-2\main.cpp
+	<iostream>
+	<vector>
+	"histogram.h"
+	"svg.h"
+	<windows.h>
+
+1625576148 e:\Учеба\Прога\ЛР 4\lab04-2\svg.h
+	<vector>
+	<iostream>
+	<sstream>
+	<windows.h>
+
+1625576211 source:e:\Учеба\Прога\ЛР 4\lab04-2\svg.cpp
 	<iostream>
 	<vector>
 	"svg.h"

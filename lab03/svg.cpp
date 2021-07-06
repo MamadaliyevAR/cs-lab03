@@ -2,7 +2,36 @@
 #include <vector>
 #include "svg.h"
 
-void svg_begin(double width, double height)
+
+string
+make_info_text() {
+    stringstream buffer;
+
+    DWORD info = GetVersion();
+     DWORD mask = 0x0000ffff;
+    DWORD version = info & mask;
+    DWORD platform = info >> 16;
+    DWORD mask_2 = 0x0000ff;
+
+   if ((info & 0x80000000) == 0)
+    {
+        DWORD version_major = version & mask_2;
+        DWORD version_minor = version >> 8;
+        DWORD build = platform;
+        buffer << "Windows v"<<version_major<<"."<<version_minor<<"(build"<<build<<")";
+
+    }
+    char computer_name[MAX_COMPUTERNAME_LENGTH + 1];
+    DWORD size = MAX_COMPUTERNAME_LENGTH+1;
+    GetComputerNameA(computer_name, &size);
+    buffer<<"Computer name:" <<computer_name;
+    // TODO: получить версию системы, записать в буфер.
+    // TODO: получить имя компьютера, записать в буфер.
+    return buffer.str();
+}
+
+void
+svg_begin(double width, double height)
 {
     cout << "<?xml version='1.0' encoding='UTF-8'?>\n";
     cout << "<svg ";
@@ -12,59 +41,61 @@ void svg_begin(double width, double height)
     cout << "xmlns='http://www.w3.org/2000/svg'>\n";
 }
 
-void svg_end()
+void
+svg_end()
 {
     cout << "</svg>\n";
 }
 
-void svg_rect(double left, double baseline, size_t width, double height, string stroke , string fill = "black")
+void
+svg_text(double left, double baseline , string text)
 {
-    cout << "<rect x ='" << left << "' y ='" << baseline << "' width ='" << width << "' height ='" << height << "' stroke ='" << stroke << "' fill ='" << fill << "' />\n";
+    cout << "<text x='" << left << "' y='" << baseline << "'>"<<text<<"</text>";
 }
 
-void svg_text(double left, double baseline, string text)
+void
+svg_rect(double x, double y, double width, double height, string stroke, string fill)
 {
-    cout << "<text x='" << left << "' y='" << baseline << "'>" << text << "</text>\n";
+    cout << "<rect x='" << x << "' y='" << y <<"' width='"<< width <<"' height='"<<height<<"' stroke='"<<stroke<<"' fill='"<<fill<<"' />";
 }
 
-void show_histogram_svg(const vector<size_t>& bins)
+void show_histogram_svg(const vector<size_t>& bins, size_t& bin_height)
 {
-const auto IMAGE_WIDTH = 400;
-const auto MAX_WIDTH = 350;
-const auto IMAGE_HEIGHT = 300;
-const auto TEXT_LEFT = 20;
-const auto TEXT_BASELINE = 20;
-const auto TEXT_WIDTH = 50;
-const auto BIN_HEIGHT = 30;
-const double BLOCK_WIDTH = 10;
-svg_begin(IMAGE_WIDTH, IMAGE_HEIGHT);
-double top = 0;
+    if (bins.size() == 0)
+    {
+        return;
+    }
+    const auto IMAGE_WIDTH = 500;
+    const auto IMAGE_HEIGHT = 300;
+    const auto TEXT_LEFT = 15;
+    const auto TEXT_BASELINE = 20;
+    const auto TEXT_HEIGHT = 30;
+    const auto BIN_WIDTH = 30;
+    const auto TEXT_TOP=10;
 
-size_t max_count = 0;
-for (size_t count : bins) {
-if (count > max_count) {
-max_count = count;
-}
-}
-const bool scaling_needed = (max_count * BLOCK_WIDTH) > MAX_WIDTH;
+    svg_begin(IMAGE_WIDTH, IMAGE_HEIGHT);
 
-for (size_t bin : bins)
-{
-const double bin_width = BLOCK_WIDTH * bin;
+    double left =0;
 
-size_t width = bin_width;
-if (scaling_needed) {
-const double scaling_factor = (double)MAX_WIDTH / (max_count * BLOCK_WIDTH);
-width = (bin_width * scaling_factor);
-}
+    size_t max_count=bins[0];
+    for (size_t count : bins)
+    {
+        if ( count >max_count)
+        {
+            max_count=count;
+        }
+    }
 
-string stroke = "red";
-string fill = "red";
+    for (size_t bin: bins)
+    {
+        const double scaling_factor = (double)(IMAGE_HEIGHT - TEXT_HEIGHT-TEXT_TOP) / max_count;
+        bin_height=(size_t)(bin*scaling_factor);
 
+        svg_text(left + TEXT_LEFT, TEXT_BASELINE+TEXT_TOP, to_string(bin));
+        svg_rect(left, TEXT_HEIGHT+TEXT_TOP, BIN_WIDTH, bin_height);
+        left += BIN_WIDTH;
+    }
+       svg_text(0, TEXT_TOP, make_info_text());
 
-svg_text(TEXT_LEFT, top + TEXT_BASELINE, to_string(bin));
-svg_rect(TEXT_WIDTH, top, width, BIN_HEIGHT, stroke, fill);
-top += BIN_HEIGHT;
-}
-svg_end();
+    svg_end();
 }
